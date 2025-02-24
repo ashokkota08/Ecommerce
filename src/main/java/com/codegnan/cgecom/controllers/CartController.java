@@ -40,7 +40,7 @@ public class CartController {
 
     @GetMapping
     public String viewCart(HttpSession session, Model model) {
-        // Fetch cart items from session
+       
         List<OrderItem> cartItems = getCartItemsFromSession(session);
 
         double totalPrice = 0;
@@ -50,21 +50,21 @@ public class CartController {
 
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalPrice", totalPrice);
-        return "cart"; // JSP to display cart contents
+        return "cart"; 
     }
 
     @PostMapping("/add")
     public String addToCart(@RequestParam int productId, @RequestParam int quantity, HttpSession session) {
-        // Fetch cart items from session
+      
         List<OrderItem> cartItems = getCartItemsFromSession(session);
 
-        // Retrieve product by ID
+  
         Product product = productService.getProductById(productId);
         if (product == null) {
             throw new IllegalArgumentException("Invalid product ID");
         }
 
-        // Check if the product already exists in the cart
+       
         boolean productExists = false;
         for (OrderItem item : cartItems) {
             if (item.getProduct().getId() == productId) {
@@ -74,7 +74,7 @@ public class CartController {
             }
         }
 
-        // Add new item if it does not exist in the cart
+      
         if (!productExists) {
             OrderItem newItem = new OrderItem();
             newItem.setProduct(product);
@@ -83,7 +83,7 @@ public class CartController {
             cartItems.add(newItem);
         }
 
-        // Save updated cart in session
+      
         session.setAttribute("cartItems", cartItems);
         return "redirect:/cart";
     }
@@ -92,7 +92,7 @@ public class CartController {
     public String updateCart(@RequestParam int productId, @RequestParam int quantity, HttpSession session) {
         List<OrderItem> cartItems = getCartItemsFromSession(session);
 
-        // Update quantity or remove item
+        
         List<OrderItem> orderItems = new ArrayList<>();
         for (OrderItem item : cartItems) {
             if (item.getProduct().getId() == productId) {
@@ -104,7 +104,7 @@ public class CartController {
             }
         }
 
-        // Remove items with quantity 0
+    
         cartItems.removeAll(orderItems);
 
         session.setAttribute("cartItems", cartItems);
@@ -122,7 +122,7 @@ public class CartController {
             return "redirect:/cart";
         }
 
-        // Create an Order
+        
         Order order = new Order();
         order.setUser(loggedInUser);
         order.setOrderStatus("COMPLETED");
@@ -133,19 +133,19 @@ public class CartController {
             totalPrice += item.getPrice() * item.getQuantity();
         }
 
-        // Convert double to BigDecimal
+     
         order.setTotalPrice(BigDecimal.valueOf(totalPrice));
 
         order.setOrderItems(cartItems);
 
-        // Save order and clear cart
+      
         orderService.saveOrder(order);
         session.removeAttribute("cartItems");
 
         model.addAttribute("order", order);
-        return "checkout-success"; // JSP to display success message
+        return "checkout-success"; 
     }
-    // Helper method to retrieve cart items from the session
+    
     @SuppressWarnings("unchecked")
     private List<OrderItem> getCartItemsFromSession(HttpSession session) {
         List<OrderItem> cartItems = (List<OrderItem>) session.getAttribute("cartItems");
@@ -158,14 +158,14 @@ public class CartController {
     
     @GetMapping("/payment-success")
     public String showPaymentSuccessPage(HttpSession session, Model model) {
-        // Clear the cart after payment success
+     
         session.removeAttribute("cartItems");
 
-        // Add a success message to the model
+      
         model.addAttribute("message", "Your payment was successful, and your cart has been cleared!");
 
-        // Return the payment success view
-        return "payment-success"; // This will refer to the payment-success.jsp page
+       
+        return "payment-success";
     }
     
     
@@ -174,7 +174,7 @@ public class CartController {
     public Map<String, Object> createRazorpayOrder(HttpSession session) {
         Map<String, Object> response = new HashMap<>();
         try {
-            // Get cart items and total price from session
+        
             List<OrderItem> cartItems = getCartItemsFromSession(session);
             if (cartItems == null || cartItems.isEmpty()) {
                 throw new IllegalStateException("Cart is empty");
@@ -184,7 +184,7 @@ public class CartController {
                     .mapToDouble(item -> item.getPrice() * item.getQuantity())
                     .sum();
 
-            // Call RazorpayService to create an order
+         
             com.razorpay.Order razorpayOrder = razorpayService.createOrder(totalPrice, "INR", "OrderReceipt#123");
 
             response.put("id", razorpayOrder.get("id"));

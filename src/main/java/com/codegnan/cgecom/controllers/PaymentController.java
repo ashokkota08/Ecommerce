@@ -24,9 +24,9 @@ public class PaymentController {
             model.addAttribute("orderDetails", orderDetails);
         } catch (Exception e) {
             e.printStackTrace();
-            return "error"; // Error JSP
+            return "error"; 
         }
-        return "checkout"; // JSP for payment page
+        return "checkout";
     }
 
     @PostMapping("/verify")
@@ -34,8 +34,8 @@ public class PaymentController {
                                 @RequestParam String razorpayOrderId,
                                 @RequestParam String razorpaySignature,
                                 Model model) {
-        // Payment verification logic (optional)
+        
         model.addAttribute("paymentId", razorpayPaymentId);
-        return "success"; // Success JSP
+        return "success";
     }
 }

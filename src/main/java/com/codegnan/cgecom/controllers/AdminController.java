@@ -12,12 +12,12 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String adminDashboard(HttpSession session) {
-        // Check if the logged-in user is an admin
+      
         String role = (String) session.getAttribute("role");
         if ("ADMIN".equals(role)) {
-            return "admin-dashboard"; // Render the admin dashboard page
+            return "admin-dashboard"; 
         } else {
-            return "redirect:/login"; // Redirect non-admins to the login page
+            return "redirect:/login"; 
         }
     }
 }

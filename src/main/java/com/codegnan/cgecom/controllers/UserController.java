@@ -24,19 +24,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    // Display list of users
+  
     @GetMapping
     public String listUsers(Model model) {
         List<User> users = userService.getAllUsers();
         model.addAttribute("users", users);
-        return "user-list"; // JSP page to list users
+        return "user-list";
     }
 
-    // Show user creation form
+  
     @GetMapping("/create")
     public String showCreateUserForm(Model model) {
-        model.addAttribute("user", new User()); // For binding form input
-        return "user-create"; // JSP page to create a new user
+        model.addAttribute("user", new User());
+        return "user-create"; 
     }
 
     
@@ -61,11 +61,11 @@ public class UserController {
     
     
     
- // Handle user creation form submission
+
     @PostMapping("/create")
     public String createUser(@ModelAttribute User user, Model model) {
         try {
-            // Save the user to the database
+           
             userService.createUser(user.getUsername(), user.getPassword(), user.getRole(), user.getPhone_number(), user.getEmail());
             
             // Send a welcome email
@@ -77,7 +77,7 @@ public class UserController {
             // Redirect to the login page after successful registration
             return "redirect:/login";
         } catch (Exception e) {
-            // Add an error message to the model and return to the registration page
+           
             model.addAttribute("error", "Failed to create user: " + e.getMessage());
             return "create-user"; // Return to the user creation page with an error message
         }
